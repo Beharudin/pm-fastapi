@@ -6,6 +6,15 @@ import { useTasks, useCreateTask, useUpdateTask, useDeleteTask } from '../hooks/
 import { useProjects } from '../hooks/useProjects'
 import { useAuthStore } from '../store/authStore'
 
+interface TaskFormValues {
+  title: string
+  description: string
+  project_id: string
+  assigned_to: string
+  due_date: string
+  estimated_hours: number | string
+}
+
 const taskSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   description: z.string().optional(),
@@ -136,7 +145,7 @@ const Tasks = () => {
 
           {showCreate && (
             <div className="bg-white shadow rounded-lg p-6 mb-6">
-              <Formik
+              <Formik<TaskFormValues>
                 initialValues={{
                   title: editingTask?.title || '',
                   description: editingTask?.description || '',
@@ -158,7 +167,7 @@ const Tasks = () => {
                           className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                           placeholder="Task title"
                         />
-                        {errors.title && touched.title && (
+                        {typeof errors.title === 'string' && touched.title && (
                           <p className="text-red-500 text-sm mt-1">{errors.title}</p>
                         )}
                       </div>
@@ -173,7 +182,7 @@ const Tasks = () => {
                             <option key={project.id} value={project.id}>{project.name}</option>
                           ))}
                         </Field>
-                        {errors.project_id && touched.project_id && (
+                        {typeof errors.project_id === 'string' && touched.project_id && (
                           <p className="text-red-500 text-sm mt-1">{errors.project_id}</p>
                         )}
                       </div>
