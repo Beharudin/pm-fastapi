@@ -1,0 +1,37 @@
+# =========================
+# 🚀 FASTAPI CORE
+# =========================
+fastapi
+uvicorn[standard]
+python-multipart
+
+# =========================
+# 🗄 DATABASE (UPDATED)
+# =========================
+sqlalchemy
+psycopg[binary]   # ✅ replaces psycopg2
+alembic
+
+# =========================
+# 🔐 AUTH
+# =========================
+python-jose[cryptography]
+passlib[bcrypt]
+
+# =========================
+# ⚙️ CONFIG
+# =========================
+python-dotenv
+
+# =========================
+# 📧 VALIDATION
+# =========================
+pydantic
+
+# =========================
+# 🚀 OPTIONAL
+# =========================
+httpx
+aiofiles
+slowapi
+fastapi-mail
