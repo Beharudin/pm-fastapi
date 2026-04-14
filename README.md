@@ -106,7 +106,9 @@ Visit `http://localhost:8000/docs` for interactive Swagger UI documentation.
 
 ## Docker Deployment
 
-1. **Build the image**:
+### Run only the backend
+
+1. **Build the backend image**:
    ```bash
    docker build -t pm-api .
    ```
@@ -115,6 +117,23 @@ Visit `http://localhost:8000/docs` for interactive Swagger UI documentation.
    ```bash
    docker run -p 8000:8000 --env-file .env pm-api
    ```
+
+### Run backend and frontend together with Docker Compose
+
+1. **Make sure your `.env` file contains the required values**.
+2. **Start both services**:
+   ```bash
+   docker compose up --build
+   ```
+
+3. **Open the apps**:
+   - Backend: `http://localhost:8000`
+   - Frontend: `http://localhost:5173`
+
+If you want to stop both services, use:
+```bash
+docker compose down
+```
 
 ## Configuration
 
