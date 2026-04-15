@@ -1,22 +1,25 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from core.database import get_db
-from schemas.auth import RegisterRequest, LoginRequest, TokenResponse
+from core.response import format_response
+from schemas.auth import RegisterRequest, LoginRequest, TokenResponse, RegisterResponse, LoginResponse, UserResponse
 from services.auth_service import register_user, authenticate_user
 from core.security import create_access_token
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
-@router.post("/register")
+@router.post("/register", response_model=RegisterResponse)
 def register(payload: RegisterRequest, db: Session = Depends(get_db)):
     user = register_user(db, payload.email, payload.password)
-    return {"message": "User created", "id": str(user.id)}
+    user_data = UserResponse(id=str(user.id), email=user.email, role=user.role.value, is_active=user.is_active)
+    return format_response(message="User created successfully", data=user_data)
 
-@router.post("/login", response_model=TokenResponse)
+@router.post("/login", response_model=LoginResponse)
 def login(payload: LoginRequest, db: Session = Depends(get_db)):
     user = authenticate_user(db, payload.email, payload.password)
     if not user:
-        return {"error": "Invalid credentials"}
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
     
     token = create_access_token({"sub": str(user.id)})
-    return {"access_token": token}
+    token_data = TokenResponse(access_token=token)
+    return format_response(message="Login successful", data=token_data)

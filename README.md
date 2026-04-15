@@ -181,10 +181,6 @@ pm-app/
 4. Add tests if applicable
 5. Submit a pull request
 
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
 ## Support
 
 For questions or issues, please open an issue on GitHub or contact the maintainers.

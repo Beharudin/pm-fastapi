@@ -9,7 +9,7 @@ python-multipart
 # 🗄 DATABASE (UPDATED)
 # =========================
 sqlalchemy
-psycopg[binary]   # ✅ replaces psycopg2
+psycopg2-binary
 alembic
 
 # =========================
