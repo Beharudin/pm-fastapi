@@ -11,105 +11,87 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
-                <h1 className="text-xl font-bold text-gray-900">Project Manager</h1>
-              </div>
-              <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-                <Link
-                  to="/"
-                  className="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-                >
-                  Dashboard
-                </Link>
-                <Link
-                  to="/projects"
-                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-                >
-                  Projects
-                </Link>
-                <Link
-                  to="/tasks"
-                  className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-                >
-                  Tasks
-                </Link>
-              </div>
+    <div className="min-h-screen bg-slate-100 text-slate-900">
+      <header className="bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-700 py-8 shadow-lg shadow-slate-500/10">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p className="text-sm uppercase tracking-[0.24em] text-slate-300">Project Manager</p>
+              <h1 className="mt-3 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
+                Welcome back, {user?.email?.split('@')[0] ?? 'User'}
+              </h1>
+              <p className="mt-3 max-w-2xl text-base text-slate-200 sm:text-lg">
+                View your stats, manage projects, and organize tasks all from one modern dashboard.
+              </p>
             </div>
-            <div className="flex items-center">
-              <span className="text-gray-700 mr-4">Welcome, {user?.email}</span>
-              <button
-                onClick={handleLogout}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-md text-sm font-medium"
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Link
+                to="/projects"
+                className="inline-flex items-center justify-center rounded-2xl bg-white/95 px-5 py-3 text-sm font-semibold text-slate-900 shadow-lg shadow-slate-900/10 transition hover:bg-white"
               >
-                Logout
-              </button>
+                Browse Projects
+              </Link>
+              <Link
+                to="/tasks"
+                className="inline-flex items-center justify-center rounded-2xl bg-indigo-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 transition hover:bg-indigo-400"
+              >
+                View Tasks
+              </Link>
             </div>
           </div>
         </div>
-      </nav>
+      </header>
 
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Dashboard</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-indigo-500 rounded-md flex items-center justify-center">
-                      <span className="text-white text-sm font-medium">P</span>
-                    </div>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">Total Projects</dt>
-                      <dd className="text-lg font-medium text-gray-900">0</dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
-                      <span className="text-white text-sm font-medium">T</span>
-                    </div>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">Total Tasks</dt>
-                      <dd className="text-lg font-medium text-gray-900">0</dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-yellow-500 rounded-md flex items-center justify-center">
-                      <span className="text-white text-sm font-medium">I</span>
-                    </div>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">In Progress</dt>
-                      <dd className="text-lg font-medium text-gray-900">0</dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
+      <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <section className="grid gap-6 md:grid-cols-3">
+          <div className="rounded-[2rem] bg-white p-6 shadow-xl shadow-slate-900/5 ring-1 ring-slate-200">
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">Projects</p>
+            <p className="mt-4 text-4xl font-semibold text-slate-900">0</p>
+            <p className="mt-2 text-sm leading-6 text-slate-500">Create your first project to start organizing work.</p>
+          </div>
+          <div className="rounded-[2rem] bg-white p-6 shadow-xl shadow-slate-900/5 ring-1 ring-slate-200">
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">Tasks</p>
+            <p className="mt-4 text-4xl font-semibold text-slate-900">0</p>
+            <p className="mt-2 text-sm leading-6 text-slate-500">Track progress across all active projects.</p>
+          </div>
+          <div className="rounded-[2rem] bg-white p-6 shadow-xl shadow-slate-900/5 ring-1 ring-slate-200">
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">In Progress</p>
+            <p className="mt-4 text-4xl font-semibold text-slate-900">0</p>
+            <p className="mt-2 text-sm leading-6 text-slate-500">Quickly identify what needs attention.</p>
+          </div>
+        </section>
+
+        <section className="mt-10 grid gap-6 lg:grid-cols-2">
+          <div className="rounded-[2rem] bg-white p-6 shadow-xl shadow-slate-900/5 ring-1 ring-slate-200">
+            <h2 className="text-xl font-semibold text-slate-900">Getting started</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-600">
+              Build your first project, create tasks, and invite your team. Everything you need to keep work moving.
+            </p>
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              <Link
+                to="/projects"
+                className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-medium text-slate-900 transition hover:bg-slate-50"
+              >
+                Create project
+              </Link>
+              <Link
+                to="/tasks"
+                className="rounded-2xl bg-indigo-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-indigo-500"
+              >
+                Add new task
+              </Link>
             </div>
           </div>
-        </div>
+
+          <div className="rounded-[2rem] bg-gradient-to-br from-slate-900 via-indigo-900 to-violet-700 p-6 text-white shadow-xl shadow-slate-900/10 ring-1 ring-white/10">
+            <h2 className="text-xl font-semibold">Productivity tips</h2>
+            <ul className="mt-5 space-y-3 text-sm leading-6 text-slate-200">
+              <li>• Group tasks by project to reduce context switching.</li>
+              <li>• Use due dates and statuses to keep priorities clear.</li>
+              <li>• Refresh your board after updates to keep everything synced.</li>
+            </ul>
+          </div>
+        </section>
       </main>
     </div>
   )

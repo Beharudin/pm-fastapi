@@ -70,3 +70,25 @@ export const useDeleteTask = () => {
     },
   })
 }
+
+export const useUploadFile = () => {
+  const queryClient = useQueryClient()
+  const token = useAuthStore((state) => state.token)
+
+  return useMutation({
+    mutationFn: async ({ taskId, file }: { taskId: string; file: File }) => {
+      const formData = new FormData()
+      formData.append('file', file)
+      const response = await axios.post(`${API_BASE}/tasks/${taskId}/upload`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      return response.data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] })
+    },
+  })
+}
