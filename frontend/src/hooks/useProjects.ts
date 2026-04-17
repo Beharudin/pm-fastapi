@@ -5,7 +5,7 @@ import { useAuthStore } from '../store/authStore'
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000'
 
 export const useProjects = () => {
-  const token = useAuthStore((state) => state.token)
+  const token = useAuthStore((state) => state.accessToken)
 
   return useQuery({
     queryKey: ['projects'],
@@ -13,7 +13,7 @@ export const useProjects = () => {
       const response = await axios.get(`${API_BASE}/projects`, {
         headers: { Authorization: `Bearer ${token}` },
       })
-      return response.data
+      return response.data.data
     },
     enabled: !!token,
   })
@@ -21,12 +21,20 @@ export const useProjects = () => {
 
 export const useCreateProject = () => {
   const queryClient = useQueryClient()
-  const token = useAuthStore((state) => state.token)
+  const token = useAuthStore((state) => state.accessToken)
 
   return useMutation({
     mutationFn: async (data: { name: string }) => {
+      
+      if (!token) {
+        throw new Error('Missing authentication token')
+      }
+
       const response = await axios.post(`${API_BASE}/projects`, data, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       })
       return response.data
     },

@@ -5,7 +5,7 @@ import { useAuthStore } from '../store/authStore'
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000'
 
 export const useTasks = (projectId?: string) => {
-  const token = useAuthStore((state) => state.token)
+  const token = useAuthStore((state) => state.accessToken)
 
   return useQuery({
     queryKey: ['tasks', projectId],
@@ -15,7 +15,7 @@ export const useTasks = (projectId?: string) => {
         headers: { Authorization: `Bearer ${token}` },
         params,
       })
-      return response.data
+      return response.data.data
     },
     enabled: !!token,
   })
@@ -23,12 +23,19 @@ export const useTasks = (projectId?: string) => {
 
 export const useCreateTask = () => {
   const queryClient = useQueryClient()
-  const token = useAuthStore((state) => state.token)
+  const token = useAuthStore((state) => state.accessToken)
 
   return useMutation({
     mutationFn: async (data: any) => {
+      if (!token) {
+        throw new Error('Missing authentication token')
+      }
+
       const response = await axios.post(`${API_BASE}/tasks`, data, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       })
       return response.data
     },
@@ -40,12 +47,19 @@ export const useCreateTask = () => {
 
 export const useUpdateTask = () => {
   const queryClient = useQueryClient()
-  const token = useAuthStore((state) => state.token)
+  const token = useAuthStore((state) => state.accessToken)
 
   return useMutation({
     mutationFn: async ({ id, data }: { id: string; data: any }) => {
+      if (!token) {
+        throw new Error('Missing authentication token')
+      }
+
       const response = await axios.put(`${API_BASE}/tasks/${id}`, data, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       })
       return response.data
     },
@@ -57,10 +71,14 @@ export const useUpdateTask = () => {
 
 export const useDeleteTask = () => {
   const queryClient = useQueryClient()
-  const token = useAuthStore((state) => state.token)
+  const token = useAuthStore((state) => state.accessToken)
 
   return useMutation({
     mutationFn: async (id: string) => {
+      if (!token) {
+        throw new Error('Missing authentication token')
+      }
+
       await axios.delete(`${API_BASE}/tasks/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
@@ -73,10 +91,14 @@ export const useDeleteTask = () => {
 
 export const useUploadFile = () => {
   const queryClient = useQueryClient()
-  const token = useAuthStore((state) => state.token)
+  const token = useAuthStore((state) => state.accessToken)
 
   return useMutation({
     mutationFn: async ({ taskId, file }: { taskId: string; file: File }) => {
+      if (!token) {
+        throw new Error('Missing authentication token')
+      }
+
       const formData = new FormData()
       formData.append('file', file)
       const response = await axios.post(`${API_BASE}/tasks/${taskId}/upload`, formData, {

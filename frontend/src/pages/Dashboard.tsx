@@ -1,13 +1,15 @@
 import { useAuthStore } from '../store/authStore'
 import { useCurrentUser } from '../hooks/useAuth'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const Dashboard = () => {
   const logout = useAuthStore((state) => state.logout)
   const { data: user } = useCurrentUser()
+  const navigate = useNavigate()
 
   const handleLogout = () => {
     logout()
+    navigate('/login')
   }
 
   return (
@@ -37,6 +39,12 @@ const Dashboard = () => {
               >
                 View Tasks
               </Link>
+              <button
+                onClick={handleLogout}
+                className="inline-flex items-center justify-center rounded-2xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/10 transition hover:bg-white/20"
+              >
+                Logout
+              </button>
             </div>
           </div>
         </div>

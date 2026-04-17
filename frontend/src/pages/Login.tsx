@@ -1,9 +1,18 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Formik, Form, Field } from 'formik'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { toFormikValidationSchema } from 'zod-formik-adapter'
 import { useLogin, useRegister } from '../hooks/useAuth'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '../components/form'
+import { Input } from '../components/input'
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email'),
@@ -16,11 +25,27 @@ const Login = () => {
   const loginMutation = useLogin()
   const registerMutation = useRegister()
 
-  const handleSubmit = (values: any) => {
+  const form = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  })
+
+  const isLoading = loginMutation.isPending || registerMutation.isPending
+  const authError = loginMutation.error ?? registerMutation.error
+  const errorMessage =
+    (authError as any)?.response?.data?.message ||
+    (authError as Error)?.message ||
+    ''
+
+  const handleSubmit = (values: z.infer<typeof loginSchema>) => {
     if (isRegister) {
       registerMutation.mutate(values, {
         onSuccess: () => {
           setIsRegister(false)
+          form.reset()
         },
       })
     } else {
@@ -70,60 +95,66 @@ const Login = () => {
                     {isRegister ? 'Register' : 'Login'}
                   </div>
                 </div>
-                <Formik
-                  initialValues={{ email: '', password: '' }}
-                  validationSchema={toFormikValidationSchema(loginSchema)}
-                  onSubmit={handleSubmit}
-                >
-                  {({ errors, touched }) => (
-                    <Form className="space-y-6">
-                      <div>
-                        <label className="block text-sm font-semibold text-slate-700">Email address</label>
-                        <Field
-                          name="email"
-                          type="email"
-                          className="mt-2 block w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-                          placeholder="you@example.com"
-                        />
-                        {typeof errors.email === 'string' && touched.email && (
-                          <p className="mt-2 text-sm text-red-600">{errors.email}</p>
-                        )}
-                      </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-slate-700">Password</label>
-                        <Field
-                          name="password"
-                          type="password"
-                          className="mt-2 block w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-                          placeholder="********"
-                        />
-                        {typeof errors.password === 'string' && touched.password && (
-                          <p className="mt-2 text-sm text-red-600">{errors.password}</p>
-                        )}
-                      </div>
-                      <button
-                        type="submit"
-                        className="w-full rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 transition hover:opacity-95"
-                      >
-                        {isRegister ? 'Create Account' : 'Sign in'}
-                      </button>
-                      <div className="text-center text-sm text-slate-500">
-                        <button
-                          type="button"
-                          onClick={() => setIsRegister((prev) => !prev)}
-                          className="font-semibold text-indigo-600 hover:text-indigo-500"
-                        >
-                          {isRegister ? 'Already have an account? Sign in' : "Don't have an account? Register"}
-                        </button>
-                      </div>
-                      {(loginMutation.error || registerMutation.error) && (
-                        <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700 ring-1 ring-red-200">
-                          {loginMutation.error?.message || registerMutation.error?.message || 'Something went wrong.'}
-                        </p>
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email address</FormLabel>
+                          <FormControl>
+                            <Input placeholder="you@example.com" type="email" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
                       )}
-                    </Form>
-                  )}
-                </Formik>
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Password</FormLabel>
+                          <FormControl>
+                            <Input placeholder="********" type="password" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <button
+                      type="submit"
+                      disabled={isLoading}
+                      className="w-full rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {isRegister ? 'Create Account' : 'Sign in'}
+                    </button>
+
+                    <div className="text-center text-sm text-slate-500">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsRegister((prev) => !prev)
+                          form.reset()
+                          loginMutation.reset()
+                          registerMutation.reset()
+                        }}
+                        className="font-semibold text-indigo-600 hover:text-indigo-500"
+                      >
+                        {isRegister ? 'Already have an account? Sign in' : "Don't have an account? Register"}
+                      </button>
+                    </div>
+
+                    {errorMessage && (
+                      <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700 ring-1 ring-red-200">
+                        {errorMessage}
+                      </p>
+                    )}
+                  </form>
+                </Form>
               </div>
             </div>
           </div>

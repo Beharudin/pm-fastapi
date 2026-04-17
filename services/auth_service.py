@@ -1,9 +1,17 @@
 from sqlalchemy.orm import Session
+from models.enums import RoleEnum
 from models.user import User
 from core.security import hash_password, verify_password
 
-def register_user(db: Session, email: str, password: str):
-    user = User(email=email, password=hash_password(password))
+def register_user(db: Session, email: str, password: str, is_active: bool):
+    user = User(email=email, password=hash_password(password), is_active=is_active)
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return user
+
+def register_admin(db: Session, email: str, password: str, role: RoleEnum, is_active: bool):
+    user = User(email=email, password=hash_password(password), role=role, is_active=is_active)
     db.add(user)
     db.commit()
     db.refresh(user)

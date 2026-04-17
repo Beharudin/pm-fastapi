@@ -116,7 +116,7 @@ const Tasks = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const { data: tasks, isLoading, refetch } = useTasks()
   const { data: projects } = useProjects()
-  const token = useAuthStore((state) => state.token)
+  const token = useAuthStore((state) => state.accessToken)
   const createTask = useCreateTask()
   const updateTask = useUpdateTask()
   const deleteTask = useDeleteTask()
